@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>French Conjugation Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        .card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .toggle-group {
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+        .verb-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #0056b3;
+        }
+        .subject-display {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 0.75rem;
+            font-size: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #result-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+        .correct { color: green; }
+        .incorrect { color: #d9534f; }
+        .setup-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .error-message {
+            color: #d9534f;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="setup-section" class="setup-section" style="display: none;">
+            <p><strong>Note:</strong> Auto-loading failed. If you are testing this locally without a web server, please upload your <code>conjugaison.csv</code> file below. (On GitHub Pages, this happens automatically!)</p>
+            <input type="file" id="file-input" accept=".csv">
+        </div>
+
+        <div class="toggle-group" id="toggles" style="display: none;">
+            <label>
+                <input type="radio" name="tense" value="pp" checked onchange="nextQuestion()"> Passé Composé
+            </label>
+            &nbsp;&nbsp;&nbsp;
+            <label>
+                <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
+            </label>
+        </div>
+
+        <div id="loading-message">Loading vocabulary from conjugaison.csv...</div>
+
+        <div id="quiz-section" style="display: none;">
+            <div class="verb-display" id="verb-text">Verb</div>
+            <div class="subject-display" id="subject-text">Subject: </div>
+            
+            <input type="text" id="answer-input" placeholder="e.g., j'ai été" autocomplete="off">
+            <br>
+            <button onclick="checkAnswer()">Submit</button>
+            <button onclick="nextQuestion()" style="background-color: #6c757d;">Skip</button>
+
+            <div id="result-message"></div>
+        </div>
+    </div>
+
+    <script>
+        let vocabulary = [];
+        let currentItem = null;
+
+        // Auto-load on GitHub Pages
+        window.onload = async function() {
+            try {
+                const response = await fetch('conjugaison.csv');
+                if (response.ok) {
+                    const text = await response.text();
+                    processCSV(text);
+                } else {
+                    showManualUpload();
+                }
+            } catch (e) {
+                showManualUpload();
+            }
+        };
+
+        function showManualUpload() {
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('setup-section').style.display = 'block';
+        }
+
+        // Manual upload fallback for local testing
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                processCSV(event.target.result);
+            };
+            reader.readAsText(file);
+        });
+
+        function processCSV(csvText) {
+            // Normalize line endings and split
+            const lines = csvText.replace(/\r/g, '').split('\n');
+            vocabulary = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    vocabulary.push({
+                        verb: parts[0].trim(),
+                        pp: parts[1].trim(),
+                        futur: parts[2].trim()
+                    });
+                }
+            }
+
+            if (vocabulary.length > 0) {
+                document.getElementById('setup-section').style.display = 'none';
+                document.getElementById('loading-message').style.display = 'none';
+                document.getElementById('toggles').style.display = 'block';
+                document.getElementById('quiz-section').style.display = 'block';
+                nextQuestion();
+            } else {
+                alert("File is empty or formatted incorrectly.");
+            }
+        }
+
+        // Extracts pronoun from the answer to tell user what subject to use
+        function extractSubject(answerString) {
+            const lower = answerString.trim().toLowerCase();
+            if (lower.startsWith("j'")) return "je";
+            
+            const parts = lower.split(' ');
+            if (parts.length > 0) {
+                const firstWord = parts[0];
+                const pronouns = ['je', 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles'];
+                if (pronouns.includes(firstWord)) return firstWord;
+            }
+            return "Unknown";
+        }
+
+        function nextQuestion() {
+            if (vocabulary.length === 0) return;
+
+            const randomIndex = Math.floor(Math.random() * vocabulary.length);
+            currentItem = vocabulary[randomIndex];
+            
+            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
+            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
+            const subjectHint = extractSubject(targetAnswer);
+
+            document.getElementById('verb-text').innerText = currentItem.verb;
+            document.getElementById('subject-text').innerHTML = `Subject: <strong>${subjectHint}</strong>`;
+            document.getElementById('answer-input').value = '';
+            document.getElementById('result-message').innerText = '';
+            document.getElementById('result-message').className = '';
+            document.getElementById('answer-input').focus();
+        }
+
+        function checkAnswer() {
+            if (!currentItem) return;
+
+            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
+            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
+            
+            // Normalize extra spaces for comparison
+            const userAnswer = document.getElementById('answer-input').value.trim().replace(/\s+/g, ' ');
+            const normalizedTarget = targetAnswer.replace(/\s+/g, ' ');
+
+            const resultDiv = document.getElementById('result-message');
+
+            if (userAnswer.toLowerCase() === normalizedTarget.toLowerCase()) {
+                resultDiv.innerText = "Correct!";
+                resultDiv.className = "correct";
+                setTimeout(nextQuestion, 1000); 
+            } else {
+                resultDiv.innerHTML = `Incorrect. Answer: <strong>${targetAnswer}</strong>`;
+                resultDiv.className = "incorrect";
+            }
+        }
+
+        // Submit with Enter key
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
