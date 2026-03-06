@@ -1,0 +1,239 @@
+Here is the complete code for the website. It contains the HTML, CSS, and JavaScript in a single file.
+
+To use this:
+
+1. Save the code below as an `index.html` file in the same directory as your `conjugaison.xlsx - 工作表1.csv` file.
+2. Because web browsers restrict websites from automatically reading local files without a server, you can either run a local web server (like `python -m http.server`), or simply use the "Upload File" button provided on the page to select the CSV file manually.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conjugation Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        .card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .toggle-group {
+            margin: 1.5rem 0;
+        }
+        .verb-display {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #0056b3;
+        }
+        .subject-display {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 0.75rem;
+            font-size: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        #result-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+        .setup-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .instructions {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="setup-section" id="setup-section">
+            <p class="instructions">Load your CSV file (<strong>conjugaison.xlsx - 工作表1.csv</strong>).</p>
+            <input type="file" id="file-input" accept=".csv">
+        </div>
+
+        <div class="toggle-group">
+            <label>
+                <input type="radio" name="tense" value="pp" checked onchange="nextQuestion()"> Passé Composé
+            </label>
+            &nbsp;&nbsp;&nbsp;
+            <label>
+                <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
+            </label>
+        </div>
+
+        <div id="quiz-section" style="display: none;">
+            <p class="instructions">Type the full conjugation including the subject pronoun (e.g., <em>j'ai été</em>, <em>nous aurons</em>).</p>
+            
+            <div class="verb-display" id="verb-text">Verb</div>
+            <div class="subject-display" id="subject-text">Subject: </div>
+            
+            <input type="text" id="answer-input" placeholder="Enter conjugation here..." autocomplete="off">
+            <br>
+            <button onclick="checkAnswer()">Submit</button>
+            <button onclick="nextQuestion()" style="background-color: #6c757d;">Skip / Next</button>
+
+            <div id="result-message"></div>
+        </div>
+    </div>
+
+    <script>
+        let vocabulary = [];
+        let currentItem = null;
+
+        // Try to automatically load the file if served via a local web server
+        window.onload = async function() {
+            try {
+                const response = await fetch('conjugaison.xlsx - 工作表1.csv');
+                if (response.ok) {
+                    const text = await response.text();
+                    processCSV(text);
+                }
+            } catch (e) {
+                console.log("Auto-fetch failed. Waiting for manual file upload.");
+            }
+        };
+
+        // Manual file upload fallback
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                processCSV(event.target.result);
+            };
+            reader.readAsText(file);
+        });
+
+        function processCSV(csvText) {
+            const lines = csvText.split('\n');
+            vocabulary = [];
+            
+            // Skip header (i=1)
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // Parse CSV ignoring commas inside quotes if any (basic split for this structure)
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    vocabulary.push({
+                        verb: parts[0].trim(),
+                        pp: parts[1].trim(),
+                        futur: parts[2].trim()
+                    });
+                }
+            }
+
+            if (vocabulary.length > 0) {
+                document.getElementById('setup-section').style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+                nextQuestion();
+            } else {
+                alert("The file appears to be empty or incorrectly formatted.");
+            }
+        }
+
+        function extractSubject(answerString) {
+            const lower = answerString.trim().toLowerCase();
+            if (lower.startsWith("j'")) {
+                return "je";
+            }
+            const parts = lower.split(' ');
+            if (parts.length > 0) {
+                const firstWord = parts[0];
+                const pronouns = ['je', 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles'];
+                if (pronouns.includes(firstWord)) {
+                    return firstWord;
+                }
+            }
+            return "Unknown";
+        }
+
+        function nextQuestion() {
+            if (vocabulary.length === 0) return;
+
+            const randomIndex = Math.floor(Math.random() * vocabulary.length);
+            currentItem = vocabulary[randomIndex];
+            
+            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
+            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
+            const subjectHint = extractSubject(targetAnswer);
+
+            document.getElementById('verb-text').innerText = currentItem.verb;
+            document.getElementById('subject-text').innerHTML = `Conjugate for: <strong>${subjectHint}</strong>`;
+            document.getElementById('answer-input').value = '';
+            document.getElementById('result-message').innerText = '';
+            document.getElementById('result-message').className = '';
+            document.getElementById('answer-input').focus();
+        }
+
+        function checkAnswer() {
+            if (!currentItem) return;
+
+            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
+            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
+            const userAnswer = document.getElementById('answer-input').value.trim();
+
+            const resultDiv = document.getElementById('result-message');
+
+            if (userAnswer.toLowerCase() === targetAnswer.toLowerCase()) {
+                resultDiv.innerText = "Correct!";
+                resultDiv.className = "correct";
+                setTimeout(nextQuestion, 1200); // Automatically load next question after success
+            } else {
+                resultDiv.innerHTML = `Incorrect. The correct answer is: <strong>${targetAnswer}</strong>`;
+                resultDiv.className = "incorrect";
+            }
+        }
+
+        // Allow pressing "Enter" to submit
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
+
+```
