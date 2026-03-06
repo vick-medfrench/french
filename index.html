@@ -5,115 +5,319 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>French Conjugation Practice</title>
     <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --error: #EF4444;
+            --border: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            width: 100%;
             max-width: 600px;
-            margin: 3rem auto;
-            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             text-align: center;
         }
-        .card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .toggle-group {
-            margin: 1.5rem 0;
-            font-size: 1.1rem;
-        }
-        .verb-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 1rem 0;
-            color: #0056b3;
-        }
-        .subject-display {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: #555;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 0.75rem;
-            font-size: 1.2rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
-        button {
+
+        .btn {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
-            background-color: #0056b3;
-            color: white;
+            font-weight: 500;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 0.5rem;
+            transition: all 0.2s ease;
         }
-        button:hover {
-            background-color: #004494;
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
         }
-        #result-message {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            min-height: 1.5em;
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
         }
-        .correct { color: green; }
-        .incorrect { color: #d9534f; }
-        .setup-section {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #ddd;
+
+        .btn-secondary {
+            background-color: var(--border);
+            color: var(--text-main);
         }
-        .error-message {
-            color: #d9534f;
+
+        .btn-secondary:hover {
+            background-color: #D1D5DB;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
             font-size: 0.9rem;
-            margin-top: 1rem;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+
+        .btn-danger {
+            background-color: #FEE2E2;
+            color: var(--error);
+        }
+        
+        .btn-danger:hover {
+            background-color: #FECACA;
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .toggle-group label {
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verb-display {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--primary);
+            letter-spacing: -0.05em;
+        }
+
+        .subject-display {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: var(--text-muted);
+        }
+
+        .subject-display strong {
+            color: var(--text-main);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        #result-message {
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-height: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .correct { color: var(--success); }
+        .incorrect { color: var(--error); }
+
+        .setup-section {
+            padding: 2rem;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mistakes-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mistake-card {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--error);
+            text-align: left;
+        }
+
+        .mistake-card-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .mistake-tense {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        .mistake-details {
+            font-size: 0.95rem;
         }
     </style>
 </head>
 <body>
 
+    <header>
+        <h1>Conjugation Practice</h1>
+        <button class="btn btn-outline" onclick="openMistakesWindow()">View Mistakes</button>
+    </header>
+
     <div class="card">
         <div id="setup-section" class="setup-section" style="display: none;">
-            <p><strong>Note:</strong> Auto-loading failed. If you are testing this locally without a web server, please upload your <code>conjugaison.csv</code> file below. (On GitHub Pages, this happens automatically!)</p>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Could not auto-load vocabulary. Please upload <strong>conjugaison.csv</strong> manually.</p>
             <input type="file" id="file-input" accept=".csv">
         </div>
 
-        <div class="toggle-group" id="toggles" style="display: none;">
-            <label>
-                <input type="radio" name="tense" value="pp" checked onchange="nextQuestion()"> Passé Composé
-            </label>
-            &nbsp;&nbsp;&nbsp;
-            <label>
-                <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
-            </label>
-        </div>
-
-        <div id="loading-message">Loading vocabulary from conjugaison.csv...</div>
+        <div id="loading-message" style="color: var(--text-muted);">Loading vocabulary...</div>
 
         <div id="quiz-section" style="display: none;">
+            <div class="toggle-group" id="toggles">
+                <label>
+                    <input type="radio" name="tense" value="pp" checked onchange="nextQuestion()"> Passé Composé
+                </label>
+                <label>
+                    <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
+                </label>
+            </div>
+
             <div class="verb-display" id="verb-text">Verb</div>
             <div class="subject-display" id="subject-text">Subject: </div>
             
             <input type="text" id="answer-input" placeholder="e.g., j'ai été" autocomplete="off">
-            <br>
-            <button onclick="checkAnswer()">Submit</button>
-            <button onclick="nextQuestion()" style="background-color: #6c757d;">Skip</button>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="checkAnswer()">Submit</button>
+                <button class="btn btn-secondary" onclick="nextQuestion()">Skip</button>
+            </div>
 
             <div id="result-message"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="mistakes-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mistakes Log</h2>
+                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem;" onclick="closeMistakesWindow()">Close</button>
+            </div>
+            
+            <div class="mistakes-list" id="mistakes-list">
+                </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-danger" onclick="clearMistakes()">Clear Memory</button>
+            </div>
         </div>
     </div>
 
     <script>
         let vocabulary = [];
         let currentItem = null;
+        // Load mistakes from browser memory
+        let mistakesLog = JSON.parse(localStorage.getItem('conjugationMistakes')) || [];
 
-        // Auto-load on GitHub Pages
         window.onload = async function() {
             try {
                 const response = await fetch('conjugaison.csv');
@@ -133,7 +337,6 @@
             document.getElementById('setup-section').style.display = 'block';
         }
 
-        // Manual upload fallback for local testing
         document.getElementById('file-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -145,7 +348,6 @@
         });
 
         function processCSV(csvText) {
-            // Normalize line endings and split
             const lines = csvText.replace(/\r/g, '').split('\n');
             vocabulary = [];
             
@@ -166,7 +368,6 @@
             if (vocabulary.length > 0) {
                 document.getElementById('setup-section').style.display = 'none';
                 document.getElementById('loading-message').style.display = 'none';
-                document.getElementById('toggles').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'block';
                 nextQuestion();
             } else {
@@ -174,7 +375,6 @@
             }
         }
 
-        // Extracts pronoun from the answer to tell user what subject to use
         function extractSubject(answerString) {
             const lower = answerString.trim().toLowerCase();
             if (lower.startsWith("j'")) return "je";
@@ -209,11 +409,13 @@
         function checkAnswer() {
             if (!currentItem) return;
 
-            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
+            const tenseInput = document.querySelector('input[name="tense"]:checked');
+            const selectedTense = tenseInput.value;
+            const tenseName = selectedTense === 'pp' ? "Passé Composé" : "Futur Simple";
             const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
             
-            // Normalize extra spaces for comparison
-            const userAnswer = document.getElementById('answer-input').value.trim().replace(/\s+/g, ' ');
+            const userAnswerRaw = document.getElementById('answer-input').value;
+            const userAnswer = userAnswerRaw.trim().replace(/\s+/g, ' ');
             const normalizedTarget = targetAnswer.replace(/\s+/g, ' ');
 
             const resultDiv = document.getElementById('result-message');
@@ -225,15 +427,66 @@
             } else {
                 resultDiv.innerHTML = `Incorrect. Answer: <strong>${targetAnswer}</strong>`;
                 resultDiv.className = "incorrect";
+                
+                // Record mistake
+                logMistake(currentItem.verb, tenseName, targetAnswer, userAnswerRaw || "(blank)");
             }
         }
 
-        // Submit with Enter key
         document.getElementById('answer-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
+            if (e.key === 'Enter') checkAnswer();
         });
+
+        /* --- Mistakes Log Logic --- */
+
+        function logMistake(verb, tense, correct, user) {
+            // Add to beginning of array
+            mistakesLog.unshift({ verb, tense, correct, user });
+            localStorage.setItem('conjugationMistakes', JSON.stringify(mistakesLog));
+        }
+
+        function openMistakesWindow() {
+            renderMistakes();
+            document.getElementById('mistakes-modal').style.display = 'flex';
+        }
+
+        function closeMistakesWindow() {
+            document.getElementById('mistakes-modal').style.display = 'none';
+        }
+
+        function clearMistakes() {
+            if(confirm("Are you sure you want to clear your mistakes history?")) {
+                mistakesLog = [];
+                localStorage.removeItem('conjugationMistakes');
+                renderMistakes();
+            }
+        }
+
+        function renderMistakes() {
+            const listContainer = document.getElementById('mistakes-list');
+            listContainer.innerHTML = '';
+
+            if (mistakesLog.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 2rem;">No mistakes logged yet. Great job!</p>';
+                return;
+            }
+
+            mistakesLog.forEach(mistake => {
+                const card = document.createElement('div');
+                card.className = 'mistake-card';
+                card.innerHTML = `
+                    <div class="mistake-card-title">
+                        <span>${mistake.verb}</span>
+                        <span class="mistake-tense">${mistake.tense}</span>
+                    </div>
+                    <div class="mistake-details">
+                        <span style="color: var(--text-muted);">You wrote:</span> <span class="incorrect">${mistake.user}</span><br>
+                        <span style="color: var(--text-muted);">Correct:</span> <strong class="correct">${mistake.correct}</strong>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
     </script>
 </body>
 </html>
