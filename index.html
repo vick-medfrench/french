@@ -6,7 +6,7 @@
     <title>French Conjugation Practice</title>
     <style>
         :root {
-            --primary: #0E4D92;
+            --primary: #4338CA;
             --primary-hover: #0E4D92;
             --bg: #F9FAFB;
             --card-bg: #FFFFFF;
@@ -360,7 +360,6 @@
                 if (!line) continue;
                 
                 const parts = line.split(',');
-                // Format: Verbe, Pronom, Présent, Conditionnel, Passé Composé, Futur Simple
                 if (parts.length >= 6) {
                     vocabulary.push({
                         verb: parts[0].trim(),
@@ -392,7 +391,6 @@
             let attempts = 0;
             let targetVerbForm = "";
 
-            // Keep drawing until we find a valid verb form that is not "-" or empty
             while (attempts < 1000) {
                 const randomIndex = Math.floor(Math.random() * vocabulary.length);
                 currentItem = vocabulary[randomIndex];
@@ -402,7 +400,6 @@
                 else if (selectedTense === 'pc') { targetVerbForm = currentItem.pc; }
                 else if (selectedTense === 'futur') { targetVerbForm = currentItem.futur; }
 
-                // Check if the verb form is not a hyphen and not empty
                 if (targetVerbForm && targetVerbForm.trim() !== '-' && targetVerbForm.trim() !== '') {
                     break;
                 }
@@ -417,32 +414,83 @@
             document.getElementById('answer-input').focus();
         }
 
-        // Helper function to build the accepted answer strings
-        function getValidAnswers(pronom, verbForm) {
-            const verbLower = verbForm.trim().toLowerCase();
+        // Advanced parser to expand (e) and (s) suffixes appropriately
+        function parseAnswers(pronom, verbForm) {
+            // Standardize CSV formats like allé(e)s to allé(e)(s) for easier replacement
+            let str = verbForm.trim().toLowerCase();
+            str = str.replace(/\(e\)s/g, '(e)(s)'); 
+            
+            // Generate the 4 combinations: Masc Sing, Fem Sing, Masc Plur, Fem Plur
+            let ms = str.replace(/\(e\)/g, '').replace(/\(s\)/g, '').replace(/\s+/g, ' ').trim();
+            let fs = str.replace(/\(e\)/g, 'e').replace(/\(s\)/g, '').replace(/\s+/g, ' ').trim();
+            let mp = str.replace(/\(e\)/g, '').replace(/\(s\)/g, 's').replace(/\s+/g, ' ').trim();
+            let fp = str.replace(/\(e\)/g, 'e').replace(/\(s\)/g, 's').replace(/\s+/g, ' ').trim();
+
             const p = pronom.trim().toLowerCase();
-            let pronouns = [p];
-            
-            // Allow flexibility for slashes
-            if (p === 'il/elle') pronouns = ['il/elle', 'il', 'elle'];
-            if (p === 'ils/elles') pronouns = ['ils/elles', 'ils', 'elles'];
-            
             let answers = [];
-            
-            pronouns.forEach(pron => {
-                if (pron === 'je') {
-                    const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
-                    if (vowels.includes(verbLower[0])) {
-                        answers.push("j'" + verbLower);
-                        answers.push("j' " + verbLower); // Backup format
+
+            function addAnswers(pronounStr, formsArray) {
+                formsArray.forEach(form => {
+                    if (!form) return;
+                    if (pronounStr === 'je') {
+                        const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
+                        if (vowels.includes(form[0])) {
+                            answers.push("j'" + form);
+                            answers.push("j' " + form);
+                        } else {
+                            answers.push("je " + form);
+                        }
                     } else {
-                        answers.push("je " + verbLower);
+                        answers.push(pronounStr + " " + form);
                     }
-                } else {
-                    answers.push(pron + " " + verbLower);
-                }
-            });
-            return answers;
+                });
+            }
+
+            // Assign combinations based on strict user rules
+            if (p === 'je' || p === 'tu') {
+                addAnswers(p, [ms, fs]);
+            } 
+            else if (p === 'il/elle') {
+                addAnswers('il', [ms]);
+                addAnswers('elle', [fs]);
+                addAnswers('il/elle', [ms, fs]); 
+            } 
+            else if (p === 'nous' || p === 'vous') {
+                addAnswers(p, [ms, fs, mp, fp]);
+            } 
+            else if (p === 'ils/elles') {
+                addAnswers('ils', [mp]);
+                addAnswers('elles', [fp]);
+                addAnswers('ils/elles', [mp, fp]); 
+            }
+            else {
+                addAnswers(p, [ms, fs, mp, fp]);
+            }
+
+            // Deduplicate valid arrays
+            let validArray = [...new Set(answers)];
+
+            // Create a smart display string to teach the user exactly what was expected
+            let displayStr = "";
+            if (p === 'il/elle') {
+                displayStr = ms === fs ? `il/elle ${ms}` : `il ${ms} / elle ${fs}`;
+            } else if (p === 'ils/elles') {
+                displayStr = mp === fp ? `ils/elles ${mp}` : `ils ${mp} / elles ${fp}`;
+            } else if (p === 'je') {
+                const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
+                let je_ms = vowels.includes(ms[0]) ? `j'${ms}` : `je ${ms}`;
+                let je_fs = vowels.includes(fs[0]) ? `j'${fs}` : `je ${fs}`;
+                displayStr = ms === fs ? je_ms : `${je_ms} (or ${je_fs})`;
+            } else if (p === 'nous' || p === 'vous') {
+                displayStr = ms === mp ? `${p} ${mp}` : `${p} ${mp} (also accepted: ${fp}, ${ms}, ${fs})`;
+            } else {
+                displayStr = validArray[0];
+            }
+
+            return {
+                validList: validArray,
+                display: displayStr
+            };
         }
 
         function checkAnswer() {
@@ -459,19 +507,21 @@
             else if (selectedTense === 'pc') { tenseName = "Passé Composé"; targetVerbForm = currentItem.pc; }
             else if (selectedTense === 'futur') { tenseName = "Futur Simple"; targetVerbForm = currentItem.futur; }
             
-            // Build the accepted final strings (e.g. ["je suis"], ["j'ai été"])
-            const validAnswers = getValidAnswers(currentItem.pronom, targetVerbForm);
-            const primaryDisplayAnswer = validAnswers[0]; // Best looking one for display
+            // Build the accepted strings intelligently mapping constraints
+            const parsedData = parseAnswers(currentItem.pronom, targetVerbForm);
+            const validAnswers = parsedData.validList;
+            const primaryDisplayAnswer = parsedData.display;
             
+            // Handle curly apostrophes from mobile keyboards and extra spacing
             const userAnswerRaw = document.getElementById('answer-input').value;
-            const userAnswerNormalized = userAnswerRaw.trim().replace(/\s+/g, ' ').toLowerCase();
+            const userAnswerNormalized = userAnswerRaw.trim().replace(/’/g, "'").replace(/\s+/g, ' ').toLowerCase();
 
             const resultDiv = document.getElementById('result-message');
 
             if (validAnswers.includes(userAnswerNormalized)) {
                 resultDiv.innerText = "Correct!";
                 resultDiv.className = "correct";
-                setTimeout(nextQuestion, 1000); 
+                setTimeout(nextQuestion, 1200); 
             } else {
                 resultDiv.innerHTML = `Incorrect. Answer: <strong>${primaryDisplayAnswer}</strong>`;
                 resultDiv.className = "incorrect";
