@@ -109,22 +109,26 @@
         }
 
         .toggle-group {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
             margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--bg);
-            border-radius: 8px;
         }
 
-        .toggle-group label {
-            cursor: pointer;
+        .tense-select {
+            padding: 0.75rem 1rem;
+            font-size: 1.1rem;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg);
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            max-width: 250px;
+            transition: border-color 0.2s;
+        }
+
+        .tense-select:focus {
+            border-color: var(--primary);
         }
 
         .verb-display {
@@ -275,24 +279,18 @@
 
         <div id="quiz-section" style="display: none;">
             <div class="toggle-group" id="toggles">
-                <label>
-                    <input type="radio" name="tense" value="present" checked onchange="nextQuestion()"> Présent
-                </label>
-                <label>
-                    <input type="radio" name="tense" value="conditionnel" onchange="nextQuestion()"> Conditionnel
-                </label>
-                <label>
-                    <input type="radio" name="tense" value="pc" onchange="nextQuestion()"> Passé Composé
-                </label>
-                <label>
-                    <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
-                </label>
+                <select id="tense-select" onchange="nextQuestion()" class="tense-select">
+                    <option value="present">Présent</option>
+                    <option value="pc">Passé Composé</option>
+                    <option value="futur">Futur Simple</option>
+                    <option value="conditionnel">Conditionnel</option>
+                </select>
             </div>
 
             <div class="verb-display" id="verb-text">Verb</div>
             <div class="subject-display" id="subject-text">Subject: </div>
             
-            <input type="text" id="answer-input" placeholder="e.g., suis, ai été" autocomplete="off">
+            <input type="text" id="answer-input" placeholder="e.g., je suis, j'ai été" autocomplete="off">
             
             <div class="button-group">
                 <button class="btn btn-primary" onclick="checkAnswer()">Submit</button>
@@ -357,13 +355,12 @@
             const lines = csvText.replace(/\r/g, '').split('\n');
             vocabulary = [];
             
-            // Start from i=1 to skip the header row
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
                 
                 const parts = line.split(',');
-                // New Format: Verbe, Pronom, Présent, Conditionnel, Passé Composé, Futur Simple
+                // Format: Verbe, Pronom, Présent, Conditionnel, Passé Composé, Futur Simple
                 if (parts.length >= 6) {
                     vocabulary.push({
                         verb: parts[0].trim(),
@@ -393,7 +390,6 @@
             currentItem = vocabulary[randomIndex];
 
             document.getElementById('verb-text').innerText = currentItem.verb;
-            // The pronoun is now provided directly from the CSV
             document.getElementById('subject-text').innerHTML = `Subject: <strong>${currentItem.pronom}</strong>`;
             document.getElementById('answer-input').value = '';
             document.getElementById('result-message').innerText = '';
@@ -401,46 +397,66 @@
             document.getElementById('answer-input').focus();
         }
 
+        // Helper function to build the accepted answer strings
+        function getValidAnswers(pronom, verbForm) {
+            const verbLower = verbForm.trim().toLowerCase();
+            const p = pronom.trim().toLowerCase();
+            let pronouns = [p];
+            
+            // Allow flexibility for slashes
+            if (p === 'il/elle') pronouns = ['il/elle', 'il', 'elle'];
+            if (p === 'ils/elles') pronouns = ['ils/elles', 'ils', 'elles'];
+            
+            let answers = [];
+            
+            pronouns.forEach(pron => {
+                if (pron === 'je') {
+                    const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
+                    if (vowels.includes(verbLower[0])) {
+                        answers.push("j'" + verbLower);
+                        answers.push("j' " + verbLower); // Backup format
+                    } else {
+                        answers.push("je " + verbLower);
+                    }
+                } else {
+                    answers.push(pron + " " + verbLower);
+                }
+            });
+            return answers;
+        }
+
         function checkAnswer() {
             if (!currentItem) return;
 
-            const tenseInput = document.querySelector('input[name="tense"]:checked');
+            const tenseInput = document.getElementById('tense-select');
             const selectedTense = tenseInput.value;
             
             let tenseName = "";
-            let targetAnswer = "";
+            let targetVerbForm = "";
 
-            if (selectedTense === 'present') { tenseName = "Présent"; targetAnswer = currentItem.present; }
-            else if (selectedTense === 'conditionnel') { tenseName = "Conditionnel"; targetAnswer = currentItem.conditionnel; }
-            else if (selectedTense === 'pc') { tenseName = "Passé Composé"; targetAnswer = currentItem.pc; }
-            else if (selectedTense === 'futur') { tenseName = "Futur Simple"; targetAnswer = currentItem.futur; }
+            if (selectedTense === 'present') { tenseName = "Présent"; targetVerbForm = currentItem.present; }
+            else if (selectedTense === 'conditionnel') { tenseName = "Conditionnel"; targetVerbForm = currentItem.conditionnel; }
+            else if (selectedTense === 'pc') { tenseName = "Passé Composé"; targetVerbForm = currentItem.pc; }
+            else if (selectedTense === 'futur') { tenseName = "Futur Simple"; targetVerbForm = currentItem.futur; }
+            
+            // Build the accepted final strings (e.g. ["je suis"], ["j'ai été"])
+            const validAnswers = getValidAnswers(currentItem.pronom, targetVerbForm);
+            const primaryDisplayAnswer = validAnswers[0]; // Best looking one for display
             
             const userAnswerRaw = document.getElementById('answer-input').value;
-            const userAnswer = userAnswerRaw.trim().replace(/\s+/g, ' ');
-            const normalizedTarget = targetAnswer.replace(/\s+/g, ' ');
-
-            let userToCheck = userAnswer.toLowerCase();
-            let targetToCheck = normalizedTarget.toLowerCase();
-            
-            // Allow user to type the pronoun if they want, but strip it for comparison
-            const pronomLower = currentItem.pronom.toLowerCase();
-            if (userToCheck.startsWith(pronomLower + ' ')) {
-                userToCheck = userToCheck.substring(pronomLower.length + 1).trim();
-            } else if (pronomLower === 'je' && userToCheck.startsWith("j'")) {
-                userToCheck = userToCheck.substring(2).trim();
-            }
+            const userAnswerNormalized = userAnswerRaw.trim().replace(/\s+/g, ' ').toLowerCase();
 
             const resultDiv = document.getElementById('result-message');
 
-            if (userToCheck === targetToCheck) {
+            if (validAnswers.includes(userAnswerNormalized)) {
                 resultDiv.innerText = "Correct!";
                 resultDiv.className = "correct";
                 setTimeout(nextQuestion, 1000); 
             } else {
-                resultDiv.innerHTML = `Incorrect. Answer: <strong>${targetAnswer}</strong>`;
+                resultDiv.innerHTML = `Incorrect. Answer: <strong>${primaryDisplayAnswer}</strong>`;
                 resultDiv.className = "incorrect";
                 
-                logMistake(currentItem.verb, tenseName, targetAnswer, userAnswerRaw || "(blank)");
+                logMistake(currentItem.verb, tenseName, primaryDisplayAnswer, userAnswerRaw || "(blank)");
             }
         }
 
@@ -500,5 +516,3 @@
     </script>
 </body>
 </html>
-
-```
