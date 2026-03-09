@@ -1,57 +1,229 @@
-﻿Verb,pp,futur
-Être ,j'ai été,je serai
-Avoir,j'ai eu,nous aurons
-Aller,je suis allé,j'irai
-Venir,je suis venu,je viendrai
-Faire,j'ai fait,je ferai
-Mettre,j'ai mis,je mettrai
-Pouvoir,j'ai pu,tu pourras
-Vouloir,j'ai voulu,je voudrai
-Savoir,J'ai su,je saurai
-Devoir,J'ai dû,nous devrons
-Falloir,Il a fallu,il faudra
-Créer,J'ai créé,je créerai
-Appeler,j'ai appelé,j'appellerai
-Geler,J'ai gelé,je gèlerai
-Jeter,J'ai jeté,je jetterai
-Acheter,J'ai acheté,j'achèterai
-Employer,Tu as employé,tu emploieras
-Essuyer,j'ai essuyé,ils essuieront
-Envoyer,il a envoyé,il enverra
-Finir,j'ai fini,nous finirons
-Haïr,J'ai haï,ils haïront
-courir,j'ai couru,nous courrons
-mourir,je suis mort,il mourra
-acquérir,j'ai acquis,tu acquerras
-ouvrir,j'ai ouvert,j'ouvrirai
-recevoir,j'ai reçu,vous recevrez
-voir,j'ai vu,tu verras
-émouvoir,tu as ému,j'émouvrai
-valoir,j'ai valu,je vaudrai
-asseoir,tu t'es assis,j'assoirai
-pleuvoir,il a plu,il pleuvra
-rendre,j'ai rendu,je rendrai
-prendre,j'ai pris,je prendrai
-craindre,j'ai craint,je craindrai
-peindre,j'ai peint,vous peindrez
-joindre,vous avez joint,ils joindront
-rompre,j'ai rompu,ils rompront
-vaincre,nous avons vaincru,vous vaincrez
-battre,j'ai battu,je battrai
-connaître,j'ai connu,je connaîtrai
-naître,je suis né,je naîtrai
-dire,tu as dit,tu diras
-écrire,j'ai écrit,il écrira
-lire,elle a lu,elle lira
-rire,j'ai ri,nous rirons
-suffire,j'ai suffi,je suffirai
-conduire,j'ai conduit,je conduirai
-suivre,tu as suivi,je suivrai
-vivre,j'ai vécu,je vivrai
-croire,tu as cru,elle croira
-boire,ils ont bu,je boirai
-plaire,j'ai plu,je plairai
-conclure,il a conclu,il conclura
-inclure,ils ont inclus,ils incluront
-résoudre,j'ai résolu,je résoudrai
-frire,il a frit,je frirai
+﻿Verbe,Pronom,Présent,Conditionnel,Passé Composé,Futur Simple
+Être,je,suis,serais,ai été,serai
+Être,tu,es,serais,as été,seras
+Être,il/elle,est,serait,a été,sera
+Être,nous,sommes,serions,avons été,serons
+Être,vous,êtes,seriez,avez été,serez
+Être,ils/elles,sont,seraient,ont été,seront
+Avoir,je,ai,aurais,ai eu,aurai
+Avoir,tu,as,aurais,as eu,auras
+Avoir,il/elle,a,aurait,a eu,aura
+Avoir,nous,avons,aurions,avons eu,aurons
+Avoir,vous,avez,auriez,avez eu,aurez
+Avoir,ils/elles,ont,auraient,ont eu,auront
+Aller,je,vais,irais,suis allé(e),irai
+Aller,tu,vas,irais,es allé(e),iras
+Aller,il/elle,va,irait,est allé(e),ira
+Aller,nous,allons,irions,sommes allé(e)s,irons
+Aller,vous,allez,iriez,êtes allé(e)(s),irez
+Aller,ils/elles,vont,iraient,sont allé(e)s,iront
+Venir,je,viens,viendrais,suis venu(e),viendrai
+Venir,tu,viens,viendrais,es venu(e),viendras
+Venir,il/elle,vient,viendrait,est venu(e),viendra
+Venir,nous,venons,viendrions,sommes venu(e)s,viendrons
+Venir,vous,venez,viendriez,êtes venu(e)(s),viendrez
+Venir,ils/elles,viennent,viendraient,sont venu(e)s,viendront
+Faire,je,fais,ferais,ai fait,ferai
+Faire,tu,fais,ferais,as fait,feras
+Faire,il/elle,fait,ferait,a fait,fera
+Faire,nous,faisons,ferions,avons fait,ferons
+Faire,vous,faites,feriez,avez fait,ferez
+Faire,ils/elles,font,feraient,ont fait,feront
+Mettre,je,mets,mettrais,ai mis,mettrai
+Mettre,tu,mets,mettrais,as mis,mettras
+Mettre,il/elle,met,mettrait,a mis,mettra
+Mettre,nous,mettons,mettrions,avons mis,mettrons
+Mettre,vous,mettez,mettriez,avez mis,mettrez
+Mettre,ils/elles,mettent,mettraient,ont mis,mettront
+Pouvoir,je,peux,pourrais,ai pu,pourrai
+Pouvoir,tu,peux,pourrais,as pu,pourras
+Pouvoir,il/elle,peut,pourrait,a pu,pourra
+Pouvoir,nous,pouvons,pourrions,avons pu,pourrons
+Pouvoir,vous,pouvez,pourriez,avez pu,pourrez
+Pouvoir,ils/elles,peuvent,pourraient,ont pu,pourront
+Vouloir,je,veux,voudrais,ai voulu,voudrai
+Vouloir,tu,veux,voudrais,as voulu,voudras
+Vouloir,il/elle,veut,voudrait,a voulu,voudra
+Vouloir,nous,voulons,voudrions,avons voulu,voudrons
+Vouloir,vous,voulez,voudriez,avez voulu,voudrez
+Vouloir,ils/elles,veulent,voudraient,ont voulu,voudront
+Savoir,je,sais,saurais,ai su,saurai
+Savoir,tu,sais,saurais,as su,sauras
+Savoir,il/elle,sait,saurait,a su,saura
+Savoir,nous,savons,saurions,avons su,saurons
+Savoir,vous,savez,sauriez,avez su,sarez
+Savoir,ils/elles,savent,sauraient,ont su,sauront
+Devoir,je,dois,devrais,ai dû,devrai
+Devoir,tu,dois,devrais,as dû,devras
+Devoir,il/elle,doit,devrait,a dû,devra
+Devoir,nous,devons,devrions,avons dû,devrons
+Devoir,vous,devez,devriez,avez dû,devrez
+Devoir,ils/elles,doivent,devraient,ont dû,devront
+Falloir,je,-,-,-,-
+Falloir,tu,-,-,-,-
+Falloir,il/elle,faut,faudrait,a fallu,faudra
+Falloir,nous,-,-,-,-
+Falloir,vous,-,-,-,-
+Falloir,ils/elles,-,-,-,-
+Finir,je,finis,finirais,ai fini,finirai
+Finir,tu,finis,finirais,as fini,finiras
+Finir,il/elle,finit,finirait,a fini,finira
+Finir,nous,finissons,finirions,avons fini,finirons
+Finir,vous,finissez,finiriez,avez fini,finirez
+Finir,ils/elles,finissent,finiraient,ont fini,finiront
+Dire,je,dis,dirais,ai dit,dirai
+Dire,tu,dis,dirais,as dit,diras
+Dire,il/elle,dit,dirait,a dit,dira
+Dire,nous,disons,dirions,avons dit,dirons
+Dire,vous,dites,diriez,avez dit,direz
+Dire,ils/elles,disent,diraient,ont dit,diront
+Prendre,je,prends,prendrais,ai pris,prendrai
+Prendre,tu,prends,prendrais,as pris,prendras
+Prendre,il/elle,prend,prendrait,a pris,prendra
+Prendre,nous,prenons,prendrions,avons pris,prendrons
+Prendre,vous,prenez,prendriez,avez pris,prendrez
+Prendre,ils/elles,prennent,prendraient,ont pris,prendront
+Voir,je,vois,verrais,ai vu,verrai
+Voir,tu,vois,verrais,as vu,verras
+Voir,il/elle,voit,verrait,a vu,verra
+Voir,nous,voyons,verrions,avons vu,verrons
+Voir,vous,voyez,verriez,avez vu,verrez
+Voir,ils/elles,voient,verraient,ont vu,verront
+Lire,je,lis,lirais,ai lu,lirai
+Lire,tu,lis,lirais,as lu,liras
+Lire,il/elle,lit,lirait,a lu,lira
+Lire,nous,lisons,lirions,avons lu,lirons
+Lire,vous,lisez,liriez,avez lu,lirez
+Lire,ils/elles,lisent,liraient,ont lu,liront
+Écrire,je,écris,écrirais,ai écrit,écrirai
+Écrire,tu,écris,écrirais,as écrit,écriras
+Écrire,il/elle,écrit,écrirait,a écrit,écrira
+Écrire,nous,écrivons,écririons,avons écrit,écrirons
+Écrire,vous,écrivez,écririez,avez écrit,écrirez
+Écrire,ils/elles,écrivent,écriraient,ont écrit,écriront
+Appeler,je,appelle,appellerais,ai appelé,appellerai
+Appeler,tu,appelles,appellerais,as appelé,appelleras
+Appeler,il/elle,appelle,appellerait,a appelé,appellera
+Appeler,nous,appelons,appellerions,avons appelé,appellerons
+Appeler,vous,appelez,appelleriez,avez appelé,appellerez
+Appeler,ils/elles,appellent,appelleraient,ont appelé,appelleront
+Acheter,je,achète,achèterais,ai acheté,achèterai
+Acheter,tu,achètes,achèterais,as acheté,achèteras
+Acheter,il/elle,achète,achèterait,a acheté,achètera
+Acheter,nous,achetons,achèterions,avons acheté,achèterons
+Acheter,vous,achetez,achèteriez,avez acheté,achèterez
+Acheter,ils/elles,achètent,achèteraient,ont acheté,achèteront
+Envoyer,je,envoie,enverrais,ai envoyé,enverrai
+Envoyer,tu,envoies,enverrais,as envoyé,enverras
+Envoyer,il/elle,envoie,enverrait,a envoyé,enverra
+Envoyer,nous,envoyons,enverrions,avons envoyé,enverrons
+Envoyer,vous,envoyez,enverriez,avez envoyé,enverrez
+Envoyer,ils/elles,envoient,enverraient,ont envoyé,enverront
+Pleuvoir,je,-,-,-,-
+Pleuvoir,tu,-,-,-,-
+Pleuvoir,il/elle,pleut,pleuvrait,a plu,pleuvra
+Pleuvoir,nous,-,-,-,-
+Pleuvoir,vous,-,-,-,-
+Pleuvoir,ils/elles,-,-,-,-
+Boire,je,bois,boirais,ai bu,boirai
+Boire,tu,bois,boirais,as bu,boiras
+Boire,il/elle,boit,boirait,a bu,boira
+Boire,nous,buvons,boirions,avons bu,boirons
+Boire,vous,buvez,boiriez,avez bu,boirez
+Boire,ils/elles,boivent,boiraient,ont bu,boiront
+Connaître,je,connais,connaîtrais,ai connu,connaîtrai
+Connaître,tu,connais,connaîtrais,as connu,connaîtras
+Connaître,il/elle,connaît,connaîtrait,a connu,connaîtra
+Connaître,nous,connaissons,connaîtrions,avons connu,connaîtrons
+Connaître,vous,connaissez,connaîtriez,avez connu,connaîtrez
+Connaître,ils/elles,connaissent,connaîtraient,ont connu,connaîtront
+Courir,je,cours,courrais,ai couru,courrai
+Courir,tu,cours,courrais,as couru,courras
+Courir,il/elle,court,courrait,a couru,courra
+Courir,nous,courons,courrions,avons couru,courrons
+Courir,vous,courez,courriez,avez couru,courrez
+Courir,ils/elles,courent,courraient,ont couru,courront
+Ouvrir,je,ouvre,ouvrirais,ai ouvert,ouvrirai
+Ouvrir,tu,ouvres,ouvrirais,as ouvert,ouvriras
+Ouvrir,il/elle,ouvre,ouvrirait,a ouvert,ouvrira
+Ouvrir,nous,ouvrons,ouvririons,avons ouvert,ouvrirons
+Ouvrir,vous,ouvrez,ouvririez,avez ouvert,ouvrirez
+Ouvrir,ils/elles,ouvrent,ouvriraient,ont ouvert,ouvriront
+Rendre,je,rends,rendrais,ai rendu,rendrai
+Rendre,tu,rends,rendrais,as rendu,rendras
+Rendre,il/elle,rend,rendrait,a rendu,rendra
+Rendre,nous,rendons,rendrions,avons rendu,rendrons
+Rendre,vous,rendez,rendriez,avez rendu,rendrez
+Rendre,ils/elles,rendent,rendraient,ont rendu,rendront
+Vivre,je,vis,vivrais,ai vécu,vivrai
+Vivre,tu,vis,vivrais,as vécu,vivras
+Vivre,il/elle,vit,vivrait,a vécu,vivra
+Vivre,nous,vivons,vivrions,avons vécu,vivrons
+Vivre,vous,vivez,vivriez,avez vécu,vivrez
+Vivre,ils/elles,vivent,vivraient,ont vécu,vivront
+Suivre,je,suis,suivrais,ai suivi,suivrai
+Suivre,tu,suis,suivrais,as suivi,suivras
+Suivre,il/elle,suit,suivrait,a suivi,suivra
+Suivre,nous,suivons,suivrions,avons suivi,suivrons
+Suivre,vous,suivez,suivriez,avez suivi,suivrez
+Suivre,ils/elles,suivent,suivraient,ont suivi,suivront
+Plaire,je,plais,plairais,ai plu,plairai
+Plaire,tu,plais,plairais,as plu,plairas
+Plaire,il/elle,plaît,plairait,a plu,plaira
+Plaire,nous,plaisons,plairions,avons plu,plairons
+Plaire,vous,plaisez,plairiez,avez plu,plairez
+Plaire,ils/elles,plaisent,plairaient,ont plu,plairont
+Croire,je,crois,croirais,ai cru,croirai
+Croire,tu,crois,croirais,as cru,croiras
+Croire,il/elle,croit,croirait,a cru,croira
+Croire,nous,croyons,croirions,avons cru,croirons
+Croire,vous,croyez,croiriez,avez cru,croirez
+Croire,ils/elles,croient,croiraient,ont cru,croiront
+Craindre,je,crains,craindrais,ai craint,craindrai
+Craindre,tu,crains,craindrais,as craint,craindras
+Craindre,il/elle,craint,craindrait,a craint,craindra
+Craindre,nous,craignons,craindrions,avons craint,craindrons
+Craindre,vous,craignez,craindriez,avez craint,craindrez
+Craindre,ils/elles,craignent,craindraient,ont craint,craindront
+Naître,je,nais,naîtrais,suis né(e),naîtrai
+Naître,tu,nais,naîtrais,es né(e),naîtras
+Naître,il/elle,naît,naîtrait,est né(e),naîtra
+Naître,nous,naissons,naîtrions,sommes né(e)s,naîtrons
+Naître,vous,naissez,naîtriez,êtes né(e)(s),naîtrez
+Naître,ils/elles,naissent,naîtraient,sont né(e)s,naîtront
+Recevoir,je,reçois,recevrais,ai reçu,recevrai
+Recevoir,tu,reçois,recevrais,as reçu,recevras
+Recevoir,il/elle,reçoit,recevrait,a reçu,recevra
+Recevoir,nous,recevons,recevrions,avons reçu,recevrons
+Recevoir,vous,recevez,recevriez,avez reçu,recevrez
+Recevoir,ils/elles,reçoivent,recevraient,ont reçu,recevront
+Mourir,je,meurs,mourrais,suis mort(e),mourrai
+Mourir,tu,meurs,mourrais,es mort(e),mourras
+Mourir,il/elle,meurt,mourrait,est mort(e),mourra
+Mourir,nous,mourons,mourrions,sommes mort(e)s,mourrons
+Mourir,vous,mourez,mourriez,êtes mort(e)(s),mourrez
+Mourir,ils/elles,meurent,mourraient,sont mort(e)s,mourront
+Battre,je,bats,battrais,ai battu,battrai
+Battre,tu,bats,battrais,as battu,battras
+Battre,il/elle,bat,battrait,a battu,battra
+Battre,nous,battons,battrions,avons battu,battrons
+Battre,vous,battez,battriez,avez battu,battrez
+Battre,ils/elles,battent,battraient,ont battu,battront
+Conduire,je,conduis,conduirais,ai conduit,conduirai
+Conduire,tu,conduis,conduirais,as conduit,conduiras
+Conduire,il/elle,conduit,conduirait,a conduit,conduira
+Conduire,nous,conduisons,conduirions,avons conduit,conduirons
+Conduire,vous,conduisez,conduiriez,avez conduit,conduirez
+Conduire,ils/elles,conduisent,conduiraient,ont conduit,conduiront
+Rire,je,ris,rirais,ai ri,rirai
+Rire,tu,ris,rirais,as ri,riras
+Rire,il/elle,rit,rirait,a ri,rira
+Rire,nous,rions,ririons,avons ri,rirons
+Rire,vous,riez,ririez,avez ri,rirez
+Rire,ils/elles,rient,riraient,ont ri,riront
+Valoir,je,vaux,vaudrais,ai valu,vaudrai
+Valoir,tu,vaux,vaudrais,as valu,vaudras
+Valoir,il/elle,vaut,vaudrait,a vlu,vaudra
+Valoir,nous,valons,vaudrions,avons valu,vaudrons
+Valoir,vous,valez,vaudriez,avez valu,vaudrez
+Valoir,ils/elles,valent,vaudraient,ont valu,vaudront
