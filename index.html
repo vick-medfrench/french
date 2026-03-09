@@ -7,7 +7,7 @@
     <style>
         :root {
             --primary: #4F46E5;
-            --primary-hover: #4338CA;
+            --primary-hover: #4A6378;
             --bg: #F9FAFB;
             --card-bg: #FFFFFF;
             --text-main: #111827;
@@ -386,8 +386,28 @@
         function nextQuestion() {
             if (vocabulary.length === 0) return;
 
-            const randomIndex = Math.floor(Math.random() * vocabulary.length);
-            currentItem = vocabulary[randomIndex];
+            const tenseInput = document.getElementById('tense-select');
+            const selectedTense = tenseInput.value;
+            
+            let attempts = 0;
+            let targetVerbForm = "";
+
+            // Keep drawing until we find a valid verb form that is not "-" or empty
+            while (attempts < 1000) {
+                const randomIndex = Math.floor(Math.random() * vocabulary.length);
+                currentItem = vocabulary[randomIndex];
+                
+                if (selectedTense === 'present') { targetVerbForm = currentItem.present; }
+                else if (selectedTense === 'conditionnel') { targetVerbForm = currentItem.conditionnel; }
+                else if (selectedTense === 'pc') { targetVerbForm = currentItem.pc; }
+                else if (selectedTense === 'futur') { targetVerbForm = currentItem.futur; }
+
+                // Check if the verb form is not a hyphen and not empty
+                if (targetVerbForm && targetVerbForm.trim() !== '-' && targetVerbForm.trim() !== '') {
+                    break;
+                }
+                attempts++;
+            }
 
             document.getElementById('verb-text').innerText = currentItem.verb;
             document.getElementById('subject-text').innerHTML = `Subject: <strong>${currentItem.pronom}</strong>`;
