@@ -1,3 +1,8 @@
+Here is the updated code. It is now fully compatible with your new CSV format and includes the Présent and Conditionnel tenses.
+
+The layout remains identical, but I have updated the logic behind the scenes. Since your new CSV separates the pronoun from the verb, you can now type **just the conjugated verb** (e.g., `suis`, `ai été`), but the code will also gracefully accept it if you accidentally type the pronoun too (e.g., `je suis`, `j'ai été`).
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,6 +116,7 @@
         .toggle-group {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 1.5rem;
             margin-bottom: 2rem;
             padding: 1rem;
@@ -275,7 +281,13 @@
         <div id="quiz-section" style="display: none;">
             <div class="toggle-group" id="toggles">
                 <label>
-                    <input type="radio" name="tense" value="pp" checked onchange="nextQuestion()"> Passé Composé
+                    <input type="radio" name="tense" value="present" checked onchange="nextQuestion()"> Présent
+                </label>
+                <label>
+                    <input type="radio" name="tense" value="conditionnel" onchange="nextQuestion()"> Conditionnel
+                </label>
+                <label>
+                    <input type="radio" name="tense" value="pc" onchange="nextQuestion()"> Passé Composé
                 </label>
                 <label>
                     <input type="radio" name="tense" value="futur" onchange="nextQuestion()"> Futur Simple
@@ -285,7 +297,7 @@
             <div class="verb-display" id="verb-text">Verb</div>
             <div class="subject-display" id="subject-text">Subject: </div>
             
-            <input type="text" id="answer-input" placeholder="e.g., j'ai été" autocomplete="off">
+            <input type="text" id="answer-input" placeholder="e.g., suis, ai été" autocomplete="off">
             
             <div class="button-group">
                 <button class="btn btn-primary" onclick="checkAnswer()">Submit</button>
@@ -315,7 +327,6 @@
     <script>
         let vocabulary = [];
         let currentItem = null;
-        // Load mistakes from browser memory
         let mistakesLog = JSON.parse(localStorage.getItem('conjugationMistakes')) || [];
 
         window.onload = async function() {
@@ -351,16 +362,21 @@
             const lines = csvText.replace(/\r/g, '').split('\n');
             vocabulary = [];
             
+            // Start from i=1 to skip the header row
             for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
                 if (!line) continue;
                 
                 const parts = line.split(',');
-                if (parts.length >= 3) {
+                // New Format: Verbe, Pronom, Présent, Conditionnel, Passé Composé, Futur Simple
+                if (parts.length >= 6) {
                     vocabulary.push({
                         verb: parts[0].trim(),
-                        pp: parts[1].trim(),
-                        futur: parts[2].trim()
+                        pronom: parts[1].trim(),
+                        present: parts[2].trim(),
+                        conditionnel: parts[3].trim(),
+                        pc: parts[4].trim(),
+                        futur: parts[5].trim()
                     });
                 }
             }
@@ -375,31 +391,15 @@
             }
         }
 
-        function extractSubject(answerString) {
-            const lower = answerString.trim().toLowerCase();
-            if (lower.startsWith("j'")) return "je";
-            
-            const parts = lower.split(' ');
-            if (parts.length > 0) {
-                const firstWord = parts[0];
-                const pronouns = ['je', 'tu', 'il', 'elle', 'on', 'nous', 'vous', 'ils', 'elles'];
-                if (pronouns.includes(firstWord)) return firstWord;
-            }
-            return "Unknown";
-        }
-
         function nextQuestion() {
             if (vocabulary.length === 0) return;
 
             const randomIndex = Math.floor(Math.random() * vocabulary.length);
             currentItem = vocabulary[randomIndex];
-            
-            const selectedTense = document.querySelector('input[name="tense"]:checked').value;
-            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
-            const subjectHint = extractSubject(targetAnswer);
 
             document.getElementById('verb-text').innerText = currentItem.verb;
-            document.getElementById('subject-text').innerHTML = `Subject: <strong>${subjectHint}</strong>`;
+            // The pronoun is now provided directly from the CSV
+            document.getElementById('subject-text').innerHTML = `Subject: <strong>${currentItem.pronom}</strong>`;
             document.getElementById('answer-input').value = '';
             document.getElementById('result-message').innerText = '';
             document.getElementById('result-message').className = '';
@@ -411,16 +411,33 @@
 
             const tenseInput = document.querySelector('input[name="tense"]:checked');
             const selectedTense = tenseInput.value;
-            const tenseName = selectedTense === 'pp' ? "Passé Composé" : "Futur Simple";
-            const targetAnswer = selectedTense === 'pp' ? currentItem.pp : currentItem.futur;
+            
+            let tenseName = "";
+            let targetAnswer = "";
+
+            if (selectedTense === 'present') { tenseName = "Présent"; targetAnswer = currentItem.present; }
+            else if (selectedTense === 'conditionnel') { tenseName = "Conditionnel"; targetAnswer = currentItem.conditionnel; }
+            else if (selectedTense === 'pc') { tenseName = "Passé Composé"; targetAnswer = currentItem.pc; }
+            else if (selectedTense === 'futur') { tenseName = "Futur Simple"; targetAnswer = currentItem.futur; }
             
             const userAnswerRaw = document.getElementById('answer-input').value;
             const userAnswer = userAnswerRaw.trim().replace(/\s+/g, ' ');
             const normalizedTarget = targetAnswer.replace(/\s+/g, ' ');
 
+            let userToCheck = userAnswer.toLowerCase();
+            let targetToCheck = normalizedTarget.toLowerCase();
+            
+            // Allow user to type the pronoun if they want, but strip it for comparison
+            const pronomLower = currentItem.pronom.toLowerCase();
+            if (userToCheck.startsWith(pronomLower + ' ')) {
+                userToCheck = userToCheck.substring(pronomLower.length + 1).trim();
+            } else if (pronomLower === 'je' && userToCheck.startsWith("j'")) {
+                userToCheck = userToCheck.substring(2).trim();
+            }
+
             const resultDiv = document.getElementById('result-message');
 
-            if (userAnswer.toLowerCase() === normalizedTarget.toLowerCase()) {
+            if (userToCheck === targetToCheck) {
                 resultDiv.innerText = "Correct!";
                 resultDiv.className = "correct";
                 setTimeout(nextQuestion, 1000); 
@@ -428,7 +445,6 @@
                 resultDiv.innerHTML = `Incorrect. Answer: <strong>${targetAnswer}</strong>`;
                 resultDiv.className = "incorrect";
                 
-                // Record mistake
                 logMistake(currentItem.verb, tenseName, targetAnswer, userAnswerRaw || "(blank)");
             }
         }
@@ -440,7 +456,6 @@
         /* --- Mistakes Log Logic --- */
 
         function logMistake(verb, tense, correct, user) {
-            // Add to beginning of array
             mistakesLog.unshift({ verb, tense, correct, user });
             localStorage.setItem('conjugationMistakes', JSON.stringify(mistakesLog));
         }
@@ -490,3 +505,5 @@
     </script>
 </body>
 </html>
+
+```
