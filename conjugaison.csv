@@ -51,7 +51,7 @@ Savoir,je,sais,saurais,ai su,saurai
 Savoir,tu,sais,saurais,as su,sauras
 Savoir,il/elle,sait,saurait,a su,saura
 Savoir,nous,savons,saurions,avons su,saurons
-Savoir,vous,savez,sauriez,avez su,sarez
+Savoir,vous,savez,sauriez,avez su,saurez
 Savoir,ils/elles,savent,sauraient,ont su,sauront
 Devoir,je,dois,devrais,ai dû,devrai
 Devoir,tu,dois,devrais,as dû,devras
@@ -223,7 +223,55 @@ Rire,vous,riez,ririez,avez ri,rirez
 Rire,ils/elles,rient,riraient,ont ri,riront
 Valoir,je,vaux,vaudrais,ai valu,vaudrai
 Valoir,tu,vaux,vaudrais,as valu,vaudras
-Valoir,il/elle,vaut,vaudrait,a vlu,vaudra
+Valoir,il/elle,vaut,vaudrait,a valu,vaudra
 Valoir,nous,valons,vaudrions,avons valu,vaudrons
 Valoir,vous,valez,vaudriez,avez valu,vaudrez
 Valoir,ils/elles,valent,vaudraient,ont valu,vaudront
+Essuyer,je,essuie,essuierais,ai essuyé,essuierai
+Essuyer,tu,essuies,essuierais,as essuyé,essuieras
+Essuyer,il/elle,essuie,essuierait,a essuyé,essuiera
+Essuyer,nous,essuyons,essuierions,avons essuyé,essuierons
+Essuyer,vous,essuyez,essuieriez,avez essuyé,essuierez
+Essuyer,ils/elles,essuient,essuieraient,ont essuyé,essuieront
+s'asseoir,je,m'assieds,m'assiérais,me suis assis(e),m'assiérai
+s'asseoir,tu,t'assieds,t'assiérais,t'es assis(e),t'assiéras
+s'asseoir,il/elle,s'assied,s'assiérait,s'est assis(e),s'assiéra
+s'asseoir,nous,nous asseyons,nous assiérions,nous sommes assis(e)s,nous assiérons
+s'asseoir,vous,vous asseyez,vous assiériez,vous êtes assis(e)(s),vous assiérez
+s'asseoir,ils/elles,s'asseyent,se assiéraient,se sont assis(e)s,se assiéront
+geler,je,gèle,gèlerais,ai gelé,gèlerai
+geler,tu,gèles,gèlerais,as gelé,gèleras
+geler,il/elle,gèle,gèlerait,a gelé,gèlera
+geler,nous,gelons,gèlerions,avons gelé,gèlerons
+geler,vous,gelez,gèleriez,avez gelé,gèlerez
+geler,ils/elles,gèlent,gèleraient,ont gelé,gèleront
+acheter,je,achète,achèterais,ai acheté,achèterai
+acheter,tu,achètes,achèterais,as acheté,achèteras
+acheter,il/elle,achète,achèterait,a acheté,achètera
+acheter,nous,achetons,achèterions,avons acheté,achèterons
+acheter,vous,achetez,achèteriez,avez acheté,achèterez
+acheter,ils/elles,achètent,achèteraient,ont acheté,achèteront
+acquérir,je,acquiers,acquerrais,ai acquis,acquerrai
+acquérir,tu,acquiers,acquerrais,as acquis,acquerras
+acquérir,il/elle,acquiert,acquerrait,a acquis,acquerra
+acquérir,nous,acquérons,acquerrions,avons acquis,acquerrons
+acquérir,vous,acquérez,acquerriez,avez acquis,acquerrez
+acquérir,ils/elles,acquièrent,acquerraient,ont acquis,acquerront
+employer,je,emploie,emploierais,ai employé,emploierai
+employer,tu,emploies,emploierais,as employé,emploieras
+employer,il/elle,emploie,emploierait,a employé,emploiera
+employer,nous,employons,emploierions,avons employé,emploierons
+employer,vous,employez,emploieriez,avez employé,emploierez
+employer,ils/elles,emploient,emploieraient,ont employé,emploieront
+jeter,je,jette,jetterais,ai jeté,jetterai
+jeter,tu,jettes,jetterais,as jeté,jetteras
+jeter,il/elle,jette,jetterait,a jeté,jettera
+jeter,nous,jetons,jetterions,avons jeté,jetterons
+jeter,vous,jetez,jetteriez,avez jeté,jetterez
+jeter,ils/elles,jettent,jetteraient,ont jeté,jetteront
+émouvoir,je,émeus,émouvrais,ai ému,émouvrai
+émouvoir,tu,émeus,émouvrais,as ému,émouvras
+émouvoir,il/elle,émeut,émouvrait,a ému,émouvra
+émouvoir,nous,émouvons,émouvrions,avons ému,émouvrons
+émouvoir,vous,émouvez,émouvriez,avez ému,émouvrez
+émouvoir,ils/elles,émeuvent,émouvraient,ont ému,émouvront
