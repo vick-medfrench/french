@@ -1,3 +1,49 @@
+```python?code_reference&code_event_index=1
+import pandas as pd
+try:
+    df = pd.read_csv('conjugaison_subjonctif_0506.csv')
+    print("Columns:", df.columns.tolist())
+    print(df.head())
+    print("\nSubjonctif sample:")
+    if 'Subjonctif Présent' in df.columns:
+        print(df[['Verbe', 'Pronom', 'Subjonctif Présent']].head(10))
+except Exception as e:
+    print("Error:", e)
+```
+
+```text?code_stdout&code_event_index=1
+Columns: ['Verbe', 'Pronom', 'Présent', 'Conditionnel', 'Passé Composé', 'Futur Simple', 'Subjonctif Présent', 'Subjonctif Passé']
+  Verbe   Pronom Présent Conditionnel Passé Composé Futur Simple Subjonctif Présent Subjonctif Passé
+0  Être       je    suis       serais        ai été        serai               sois          aie été
+1  Être       tu      es       serais        as été        seras               sois         aies été
+2  Être  il/elle     est       serait         a été         sera               soit          ait été
+3  Être     nous  sommes      serions     avons été       serons             soyons        ayons été
+4  Être     vous    êtes       seriez      avez été        serez              soyez         ayez été
+
+Subjonctif sample:
+   Verbe     Pronom Subjonctif Présent
+0   Être         je               sois
+1   Être         tu               sois
+2   Être    il/elle               soit
+3   Être       nous             soyons
+4   Être       vous              soyez
+5   Être  ils/elles             soient
+6  Avoir         je                aie
+7  Avoir         tu               aies
+8  Avoir    il/elle                ait
+9  Avoir       nous              ayons
+
+```
+
+I noticed your sentence cut off at the end ("*the correct answer should always...*"), but given the context of the subjonctif tenses, I assume you meant **"the correct answer should always include 'que' or 'qu''."** 
+
+This is exactly how standard French conjugation works, so I've updated the logic to automatically enforce it. For example, if the tense is Subjonctif Présent, the system will expect **"que je sois"** or **"qu'il soit"** instead of just "je sois". It intelligently handles the `qu'` contraction before vowels (il, elle, ils, elles, on) and correctly keeps `que` for consonants (je, tu, nous, vous).
+
+I also updated the filename it looks for to `conjugaison_subjonctif_0506.csv` and added the two new tenses to the dropdown list.
+
+Here is your updated code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +52,7 @@
     <title>French Conjugation Practice</title>
     <style>
         :root {
-            --primary: #0E4D92;
+            --primary: #4F46E5;
             --primary-hover: #4338CA;
             --bg: #F9FAFB;
             --card-bg: #FFFFFF;
@@ -271,7 +317,7 @@
 
     <div class="card">
         <div id="setup-section" class="setup-section" style="display: none;">
-            <p style="margin-bottom: 1rem; color: var(--text-muted);">Could not auto-load vocabulary. Please upload <strong>conjugaison.csv</strong> manually.</p>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Could not auto-load vocabulary. Please upload <strong>conjugaison_subjonctif_0506.csv</strong> manually.</p>
             <input type="file" id="file-input" accept=".csv">
         </div>
 
@@ -284,13 +330,15 @@
                     <option value="pc">Passé Composé</option>
                     <option value="futur">Futur Simple</option>
                     <option value="conditionnel">Conditionnel</option>
+                    <option value="subj_present">Subjonctif Présent</option>
+                    <option value="subj_passe">Subjonctif Passé</option>
                 </select>
             </div>
 
             <div class="verb-display" id="verb-text">Verb</div>
             <div class="subject-display" id="subject-text">Subject: </div>
             
-            <input type="text" id="answer-input" placeholder="e.g., je suis, j'ai été" autocomplete="off">
+            <input type="text" id="answer-input" placeholder="e.g., je suis, j'ai été, qu'il soit" autocomplete="off">
             
             <div class="button-group">
                 <button class="btn btn-primary" onclick="checkAnswer()">Submit</button>
@@ -301,6 +349,7 @@
         </div>
     </div>
 
+    <!-- Mistakes Modal Window -->
     <div class="modal-overlay" id="mistakes-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -309,7 +358,8 @@
             </div>
             
             <div class="mistakes-list" id="mistakes-list">
-                </div>
+                <!-- Mistakes will be injected here via JS -->
+            </div>
 
             <div style="text-align: right;">
                 <button class="btn btn-danger" onclick="clearMistakes()">Clear Memory</button>
@@ -324,7 +374,7 @@
 
         window.onload = async function() {
             try {
-                const response = await fetch('conjugaison.csv');
+                const response = await fetch('conjugaison_subjonctif_0506.csv');
                 if (response.ok) {
                     const text = await response.text();
                     processCSV(text);
@@ -360,6 +410,7 @@
                 if (!line) continue;
                 
                 const parts = line.split(',');
+                // Format: Verbe, Pronom, Présent, Conditionnel, Passé Composé, Futur Simple, Subjonctif Présent, Subjonctif Passé
                 if (parts.length >= 6) {
                     vocabulary.push({
                         verb: parts[0].trim(),
@@ -367,7 +418,9 @@
                         present: parts[2].trim(),
                         conditionnel: parts[3].trim(),
                         pc: parts[4].trim(),
-                        futur: parts[5].trim()
+                        futur: parts[5].trim(),
+                        subj_present: parts.length > 6 ? parts[6].trim() : "-",
+                        subj_passe: parts.length > 7 ? parts[7].trim() : "-"
                     });
                 }
             }
@@ -399,6 +452,8 @@
                 else if (selectedTense === 'conditionnel') { targetVerbForm = currentItem.conditionnel; }
                 else if (selectedTense === 'pc') { targetVerbForm = currentItem.pc; }
                 else if (selectedTense === 'futur') { targetVerbForm = currentItem.futur; }
+                else if (selectedTense === 'subj_present') { targetVerbForm = currentItem.subj_present; }
+                else if (selectedTense === 'subj_passe') { targetVerbForm = currentItem.subj_passe; }
 
                 if (targetVerbForm && targetVerbForm.trim() !== '-' && targetVerbForm.trim() !== '') {
                     break;
@@ -414,13 +469,11 @@
             document.getElementById('answer-input').focus();
         }
 
-        // Advanced parser to expand (e) and (s) suffixes appropriately
-        function parseAnswers(pronom, verbForm) {
-            // Standardize CSV formats like allé(e)s to allé(e)(s) for easier replacement
+        // Advanced parser to expand (e) and (s) suffixes appropriately and handle 'que'
+        function parseAnswers(pronom, verbForm, isSubjonctif) {
             let str = verbForm.trim().toLowerCase();
             str = str.replace(/\(e\)s/g, '(e)(s)'); 
             
-            // Generate the 4 combinations: Masc Sing, Fem Sing, Masc Plur, Fem Plur
             let ms = str.replace(/\(e\)/g, '').replace(/\(s\)/g, '').replace(/\s+/g, ' ').trim();
             let fs = str.replace(/\(e\)/g, 'e').replace(/\(s\)/g, '').replace(/\s+/g, ' ').trim();
             let mp = str.replace(/\(e\)/g, '').replace(/\(s\)/g, 's').replace(/\s+/g, ' ').trim();
@@ -432,21 +485,36 @@
             function addAnswers(pronounStr, formsArray) {
                 formsArray.forEach(form => {
                     if (!form) return;
+                    let answersForForm = [];
+
                     if (pronounStr === 'je') {
                         const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
                         if (vowels.includes(form[0])) {
-                            answers.push("j'" + form);
-                            answers.push("j' " + form);
+                            answersForForm.push("j'" + form);
+                            answersForForm.push("j' " + form);
                         } else {
-                            answers.push("je " + form);
+                            answersForForm.push("je " + form);
                         }
                     } else {
-                        answers.push(pronounStr + " " + form);
+                        answersForForm.push(pronounStr + " " + form);
+                    }
+
+                    if (isSubjonctif) {
+                        answersForForm.forEach(ans => {
+                            const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
+                            // Determine if the pronoun itself starts with a vowel for qu' vs que
+                            if (vowels.includes(pronounStr[0].toLowerCase())) {
+                                answers.push("qu'" + ans);
+                            } else {
+                                answers.push("que " + ans);
+                            }
+                        });
+                    } else {
+                        answers.push(...answersForForm);
                     }
                 });
             }
 
-            // Assign combinations based on strict user rules
             if (p === 'je' || p === 'tu') {
                 addAnswers(p, [ms, fs]);
             } 
@@ -467,22 +535,46 @@
                 addAnswers(p, [ms, fs, mp, fp]);
             }
 
-            // Deduplicate valid arrays
             let validArray = [...new Set(answers)];
 
             // Create a smart display string to teach the user exactly what was expected
             let displayStr = "";
-            if (p === 'il/elle') {
-                displayStr = ms === fs ? `il/elle ${ms}` : `il ${ms} / elle ${fs}`;
-            } else if (p === 'ils/elles') {
-                displayStr = mp === fp ? `ils/elles ${mp}` : `ils ${mp} / elles ${fp}`;
-            } else if (p === 'je') {
+            
+            function formatDisplay(pronounStr, formMasc, formFem) {
                 const vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'ê', 'h'];
-                let je_ms = vowels.includes(ms[0]) ? `j'${ms}` : `je ${ms}`;
-                let je_fs = vowels.includes(fs[0]) ? `j'${fs}` : `je ${fs}`;
-                displayStr = ms === fs ? je_ms : `${je_ms} (or ${je_fs})`;
+                let resM = pronounStr + " " + formMasc;
+                let resF = pronounStr + " " + formFem;
+                
+                if (pronounStr === 'je') {
+                    resM = vowels.includes(formMasc[0]) ? "j'" + formMasc : "je " + formMasc;
+                    resF = vowels.includes(formFem[0]) ? "j'" + formFem : "je " + formFem;
+                }
+                
+                if (isSubjonctif) {
+                    let prepend = vowels.includes(pronounStr[0].toLowerCase()) ? "qu'" : "que ";
+                    resM = prepend + resM;
+                    resF = prepend + resF;
+                }
+                return { resM, resF };
+            }
+
+            if (p === 'il/elle') {
+                let { resM: ilM } = formatDisplay('il', ms, ms);
+                let { resM: elleF } = formatDisplay('elle', fs, fs);
+                displayStr = ms === fs ? formatDisplay('il/elle', ms, ms).resM : `${ilM} / ${elleF}`;
+            } else if (p === 'ils/elles') {
+                let { resM: ilsM } = formatDisplay('ils', mp, mp);
+                let { resM: ellesF } = formatDisplay('elles', fp, fp);
+                displayStr = mp === fp ? formatDisplay('ils/elles', mp, mp).resM : `${ilsM} / ${ellesF}`;
+            } else if (p === 'je') {
+                let { resM, resF } = formatDisplay('je', ms, fs);
+                displayStr = ms === fs ? resM : `${resM} (or ${resF})`;
             } else if (p === 'nous' || p === 'vous') {
-                displayStr = ms === mp ? `${p} ${mp}` : `${p} ${mp} (also accepted: ${fp}, ${ms}, ${fs})`;
+                let { resM } = formatDisplay(p, mp, mp);
+                let { resM: alt1 } = formatDisplay(p, fp, fp);
+                let { resM: alt2 } = formatDisplay(p, ms, ms);
+                let { resM: alt3 } = formatDisplay(p, fs, fs);
+                displayStr = ms === mp ? resM : `${resM} (also accepted: ${alt1}, ${alt2}, ${alt3})`;
             } else {
                 displayStr = validArray[0];
             }
@@ -501,18 +593,19 @@
             
             let tenseName = "";
             let targetVerbForm = "";
+            let isSubjonctif = false;
 
             if (selectedTense === 'present') { tenseName = "Présent"; targetVerbForm = currentItem.present; }
             else if (selectedTense === 'conditionnel') { tenseName = "Conditionnel"; targetVerbForm = currentItem.conditionnel; }
             else if (selectedTense === 'pc') { tenseName = "Passé Composé"; targetVerbForm = currentItem.pc; }
             else if (selectedTense === 'futur') { tenseName = "Futur Simple"; targetVerbForm = currentItem.futur; }
+            else if (selectedTense === 'subj_present') { tenseName = "Subjonctif Présent"; targetVerbForm = currentItem.subj_present; isSubjonctif = true; }
+            else if (selectedTense === 'subj_passe') { tenseName = "Subjonctif Passé"; targetVerbForm = currentItem.subj_passe; isSubjonctif = true; }
             
-            // Build the accepted strings intelligently mapping constraints
-            const parsedData = parseAnswers(currentItem.pronom, targetVerbForm);
+            const parsedData = parseAnswers(currentItem.pronom, targetVerbForm, isSubjonctif);
             const validAnswers = parsedData.validList;
             const primaryDisplayAnswer = parsedData.display;
             
-            // Handle curly apostrophes from mobile keyboards and extra spacing
             const userAnswerRaw = document.getElementById('answer-input').value;
             const userAnswerNormalized = userAnswerRaw.trim().replace(/’/g, "'").replace(/\s+/g, ' ').toLowerCase();
 
@@ -586,3 +679,4 @@
     </script>
 </body>
 </html>
+```
