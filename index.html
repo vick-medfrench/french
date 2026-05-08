@@ -271,7 +271,7 @@
 
     <div class="card">
         <div id="setup-section" class="setup-section" style="display: none;">
-            <p style="margin-bottom: 1rem; color: var(--text-muted);">Could not auto-load vocabulary. Please upload <strong>conjugaison_subjonctif_0506.csv</strong> manually.</p>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Could not auto-load vocabulary. Please upload <strong>French_Conjugations_0508.csv</strong> manually.</p>
             <input type="file" id="file-input" accept=".csv">
         </div>
 
@@ -303,7 +303,6 @@
         </div>
     </div>
 
-    <!-- Mistakes Modal Window -->
     <div class="modal-overlay" id="mistakes-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -312,8 +311,7 @@
             </div>
             
             <div class="mistakes-list" id="mistakes-list">
-                <!-- Mistakes will be injected here via JS -->
-            </div>
+                </div>
 
             <div style="text-align: right;">
                 <button class="btn btn-danger" onclick="clearMistakes()">Clear Memory</button>
@@ -328,7 +326,7 @@
 
         window.onload = async function() {
             try {
-                const response = await fetch('conjugaison_subjonctif_0506.csv');
+                const response = await fetch('French_Conjugations_0508.csv');
                 if (response.ok) {
                     const text = await response.text();
                     processCSV(text);
@@ -565,72 +563,4 @@
 
             const resultDiv = document.getElementById('result-message');
 
-            if (validAnswers.includes(userAnswerNormalized)) {
-                resultDiv.innerText = "Correct!";
-                resultDiv.className = "correct";
-                setTimeout(nextQuestion, 1200); 
-            } else {
-                resultDiv.innerHTML = `Incorrect. Answer: <strong>${primaryDisplayAnswer}</strong>`;
-                resultDiv.className = "incorrect";
-                
-                logMistake(currentItem.verb, tenseName, primaryDisplayAnswer, userAnswerRaw || "(blank)");
-            }
-        }
-
-        document.getElementById('answer-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkAnswer();
-        });
-
-        /* --- Mistakes Log Logic --- */
-
-        function logMistake(verb, tense, correct, user) {
-            mistakesLog.unshift({ verb, tense, correct, user });
-            localStorage.setItem('conjugationMistakes', JSON.stringify(mistakesLog));
-        }
-
-        function openMistakesWindow() {
-            renderMistakes();
-            document.getElementById('mistakes-modal').style.display = 'flex';
-        }
-
-        function closeMistakesWindow() {
-            document.getElementById('mistakes-modal').style.display = 'none';
-        }
-
-        function clearMistakes() {
-            if(confirm("Are you sure you want to clear your mistakes history?")) {
-                mistakesLog = [];
-                localStorage.removeItem('conjugationMistakes');
-                renderMistakes();
-            }
-        }
-
-        function renderMistakes() {
-            const listContainer = document.getElementById('mistakes-list');
-            listContainer.innerHTML = '';
-
-            if (mistakesLog.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 2rem;">No mistakes logged yet. Great job!</p>';
-                return;
-            }
-
-            mistakesLog.forEach(mistake => {
-                const card = document.createElement('div');
-                card.className = 'mistake-card';
-                card.innerHTML = `
-                    <div class="mistake-card-title">
-                        <span>${mistake.verb}</span>
-                        <span class="mistake-tense">${mistake.tense}</span>
-                    </div>
-                    <div class="mistake-details">
-                        <span style="color: var(--text-muted);">You wrote:</span> <span class="incorrect">${mistake.user}</span><br>
-                        <span style="color: var(--text-muted);">Correct:</span> <strong class="correct">${mistake.correct}</strong>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            });
-        }
-    </script>
-</body>
-</html>
-```
+            if (validAnswers
