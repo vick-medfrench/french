@@ -563,4 +563,71 @@
 
             const resultDiv = document.getElementById('result-message');
 
-            if (validAnswers
+            if (validAnswers.includes(userAnswerNormalized)) {
+                resultDiv.innerText = "Correct!";
+                resultDiv.className = "correct";
+                setTimeout(nextQuestion, 1200); 
+            } else {
+                resultDiv.innerHTML = `Incorrect. Answer: <strong>${primaryDisplayAnswer}</strong>`;
+                resultDiv.className = "incorrect";
+                
+                logMistake(currentItem.verb, tenseName, primaryDisplayAnswer, userAnswerRaw || "(blank)");
+            }
+        }
+
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        /* --- Mistakes Log Logic --- */
+
+        function logMistake(verb, tense, correct, user) {
+            mistakesLog.unshift({ verb, tense, correct, user });
+            localStorage.setItem('conjugationMistakes', JSON.stringify(mistakesLog));
+        }
+
+        function openMistakesWindow() {
+            renderMistakes();
+            document.getElementById('mistakes-modal').style.display = 'flex';
+        }
+
+        function closeMistakesWindow() {
+            document.getElementById('mistakes-modal').style.display = 'none';
+        }
+
+        function clearMistakes() {
+            if(confirm("Are you sure you want to clear your mistakes history?")) {
+                mistakesLog = [];
+                localStorage.removeItem('conjugationMistakes');
+                renderMistakes();
+            }
+        }
+
+        function renderMistakes() {
+            const listContainer = document.getElementById('mistakes-list');
+            listContainer.innerHTML = '';
+
+            if (mistakesLog.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color: var(--text-muted); margin-top: 2rem;">No mistakes logged yet. Great job!</p>';
+                return;
+            }
+
+            mistakesLog.forEach(mistake => {
+                const card = document.createElement('div');
+                card.className = 'mistake-card';
+                card.innerHTML = `
+                    <div class="mistake-card-title">
+                        <span>${mistake.verb}</span>
+                        <span class="mistake-tense">${mistake.tense}</span>
+                    </div>
+                    <div class="mistake-details">
+                        <span style="color: var(--text-muted);">You wrote:</span> <span class="incorrect">${mistake.user}</span><br>
+                        <span style="color: var(--text-muted);">Correct:</span> <strong class="correct">${mistake.correct}</strong>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
